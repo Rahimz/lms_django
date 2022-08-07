@@ -1,4 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
+from django.conf import settings
 
 class Category(models.Model):
     title = models.CharField(max_length=250)    
@@ -48,3 +50,23 @@ class Lesson(models.Model):
     long_description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=CHOICES_STATUS, default=PUBLISHED)
     lesson_type = models.CharField(max_length=20, choices=CHOICES_LESSON_TYPE, default=ARTICLE)
+
+class Comment(models.Model):
+    course = models.ForeignKey(
+        Course, 
+        related_name='comments',
+        on_delete=models.CASCADE
+    )
+    lesson = models.ForeignKey(
+        Lesson, 
+        related_name='comments',
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=100)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='comments',
+        on_delete=models.CASCADE
+    )
