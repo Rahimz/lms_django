@@ -1,3 +1,4 @@
+from distutils.command.upload import upload
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
@@ -18,11 +19,16 @@ class Course(models.Model):
     short_description = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to='uploads', blank=True,null=True)
 
     def __str__(self):
         return self.title
 
-
+    def get_image(self):
+        if self.image:
+            return settings.WEBSITE_URL + self.image.url
+        else:
+            return "https://bulma.io/images/placeholders/1280x960.png"
 class Lesson(models.Model):
     DRAFT = 'draft'
     PUBLISHED = 'published'
