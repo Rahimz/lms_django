@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
@@ -16,6 +16,8 @@ def get_categories(request):
 
 
 @api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
 def get_courses(request):
     category_id = request.GET.get('category_id', '')
     courses = Course.objects.all()
@@ -27,6 +29,8 @@ def get_courses(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+@authentication_classes([]) # to show courses on homwpage
+@permission_classes([])
 def get_frontpage_courses(request):
     courses = Course.objects.all()[:4]
     #  because it is multiple objects we pass many = True
@@ -36,13 +40,19 @@ def get_frontpage_courses(request):
 
 
 @api_view(['GET'])
+@authentication_classes([]) # to show courses on homwpage
+@permission_classes([])
 def get_course(request, slug):
     course = Course.objects.get(slug=slug)
     course_serializer = CourseDetailSerializer(course)
     lesson_serializer = LessonListSerializer(course.lessons.all(), many=True) #many = true because it has more object than 1
 
+    if request.user.is_authenticated:
+        course_data = course_serializer.data 
+    else: 
+        course_data ={}
     data = {
-        'course': course_serializer.data,
+        'course': course_data,
         'lessons': lesson_serializer.data
     }
     return Response(data)
