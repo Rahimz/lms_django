@@ -4,13 +4,24 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
-from .models import Course, Lesson, Comment
-from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer, CommentSerializer
+from .models import Course, Lesson, Comment, Category
+from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer, CommentSerializer, CategorySerializer
+
+
+@api_view(['GET'])
+def get_categories(request):
+    categories = Category.objects.all()
+    serializer = CategorySerializer(categories, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])
 def get_courses(request):
+    category_id = request.GET.get('category_id', '')
     courses = Course.objects.all()
+
+    if category_id:
+        courses = courses.filter(categories__in=[int(category_id)])
     #  because it is multiple objects we pass many = True
     serializer = CourseListSerializer(courses, many=True)
     return Response(serializer.data)
