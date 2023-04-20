@@ -60,6 +60,9 @@ class Lesson(models.Model):
     status = models.CharField(max_length=20, choices=CHOICES_STATUS, default=PUBLISHED)
     lesson_type = models.CharField(max_length=20, choices=CHOICES_LESSON_TYPE, default=ARTICLE)
 
+    def __str__(self):
+        return self.title
+
 class Comment(models.Model):
     course = models.ForeignKey(
         Course, 
@@ -79,3 +82,24 @@ class Comment(models.Model):
         related_name='comments',
         on_delete=models.CASCADE
     )
+
+class Quiz(models.Model):
+    lesson = models.ForeignKey(
+        Lesson, 
+        related_name='quizzes',
+        on_delete=models.CASCADE, 
+    )
+    question = models.CharField(
+        max_length=200, 
+        null=True
+    )
+    answer = models.CharField(
+        max_length=200,
+        null=True
+    )
+    op1 = models.CharField(max_length=200, null=True)
+    op2 = models.CharField(max_length=200, null=True)
+    op3 = models.CharField(max_length=200, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Quizzes'
