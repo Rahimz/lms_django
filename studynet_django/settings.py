@@ -141,10 +141,11 @@ CORS_ALLOWED_ORIGINS = [
 
 # settings for Authentication
 REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%d.%m.%Y %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # )
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }

@@ -16,6 +16,8 @@ def get_quiz(request, course_slug, lesson_slug):
     return Response(serializer.data)
 
 @api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
 def get_categories(request):
     categories = Category.objects.all()
     serializer = CategorySerializer(categories, many=True)
