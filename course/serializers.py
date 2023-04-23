@@ -27,7 +27,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
 class LessonListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ('id', 'title', 'slug', 'lesson_type', 'short_description', 'long_description')
+        fields = ('id', 'title', 'slug', 'lesson_type', 'short_description', 'long_description', 'youtube_id')
 
 
 class CommentSerializer(serializers.ModelSerializer):
