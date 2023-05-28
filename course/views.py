@@ -3,9 +3,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from django.contrib.auth.models import User
+
 
 from .models import Course, Lesson, Comment, Category
-from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer, CommentSerializer, CategorySerializer, QuizSerializer
+from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer, CommentSerializer, CategorySerializer, QuizSerializer, UserSerializer
 
 
 @api_view(['GET'])
@@ -49,8 +51,8 @@ def get_frontpage_courses(request):
 
 
 @api_view(['GET'])
-@authentication_classes([]) # to show courses on homwpage
-@permission_classes([])
+# @authentication_classes([]) # to show courses on homwpage
+# @permission_classes([])
 def get_course(request, slug):
     course = Course.objects.get(slug=slug)
     course_serializer = CourseDetailSerializer(course)
@@ -92,3 +94,17 @@ def add_comment(request, course_slug, lesson_slug):
     serializer = CommentSerializer(comment)
 
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_author_courses(request, user_id):
+    user = User.objects.get(pk=user_id)
+    courses = user.courses.all()
+
+    user_serializer = UserSerializer(User, many=False)
+    courses_serializer = CourseListSerializer(courses, many=True)
+
+    return Response({
+        'courses': courses_serializer.data,
+        'created_by': user_serializer.data
+    })
