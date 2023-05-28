@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.utils.text import slugify
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
@@ -8,6 +9,24 @@ from django.contrib.auth.models import User
 
 from .models import Course, Lesson, Comment, Category
 from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer, CommentSerializer, CategorySerializer, QuizSerializer, UserSerializer
+
+
+
+@api_view(['POST'])
+def create_course(request):
+    print(request.data)
+    course = Course.objects.create(
+        title=request.data.get('title'),
+        short_description=request.data.get('short_description'),
+        long_description=request.data.get('long_description'),        
+        created_by=request.user,
+        slug=slugify(request.data.get('title'))
+    )
+    for id in request.data.get('categories'):
+        course.categories.add(id)
+    course.save()
+
+    return Response({'uo': 'uo'})
 
 
 @api_view(['GET'])
